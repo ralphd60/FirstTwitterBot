@@ -49,7 +49,7 @@ def retweeter(query):
 if __name__ == '__main__':
     while True:
          try:
-            print('Starting while true')
+            print('Starting while true statement')
             retweeter("'New York Islanders' AND -giving")
             print('sleeping within the while true')
             sleep (60)
