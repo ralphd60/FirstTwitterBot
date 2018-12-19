@@ -18,13 +18,15 @@ def retweeter(query):
 
     # For loop to iterate over tweets with NY Isles
     # for tweet in tweepy.Cursor(api.search, q=query, since=start, until=end, lang='en').items():
-    for tweet in tweepy.Cursor(api.search, q = query, since = start,  lang ='en').items():
+    for tweet in tweepy.Cursor(api.search, tweet_mode = 'extended', q = query, since = start, rpp = 100, lang ='en').items():
         try:
             print('Tweet by: @' + tweet.user.screen_name)
+            print('Created: ' + str(tweet.created_at))
             # Retweet tweets as they are found
             tweet.retweet()
             print('Retweeted the tweet ', start)
-            sleep(144)
+            print('Sleep')
+            sleep(180)
         except tweepy.TweepError as e:
             print(e.reason)
         except StopIteration:
@@ -36,6 +38,7 @@ if __name__ == '__main__':
          try:
             print('Starting while true statement')
             retweeter("'New York Islanders' AND -giving")
+            # when the cursor page is complete, it will come out and hit the below
             print('sleeping within the while true')
             sleep (60)
          except KeyboardInterrupt:
