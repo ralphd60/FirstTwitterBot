@@ -6,9 +6,9 @@ import datetime
 import logging
 from time import sleep
 from creds import *
-import signal
 
-logging.basicConfig(filename='tweet.log', filemode='w', level=logging.INFO)
+
+logging.basicConfig(filename='tweet.log', filemode='w', format='%(asctime)s %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def retweeter(query):
@@ -21,7 +21,8 @@ def retweeter(query):
 
     # For loop to iterate over tweets with NY Isles
     # for tweet in tweepy.Cursor(api.search, q=query, since=start, until=end, lang='en').items():
-    for tweet in tweepy.Cursor(api.search, tweet_mode = 'extended', q = query, since = start, rpp = 100, lang ='en').items():
+    for tweet in tweepy.Cursor(api.search, tweet_mode = 'extended', q = query, since = start, result_type = 'recent',
+                               lang ='en').items(500):
         try:
             logging.info('Tweet by: @' + tweet.user.screen_name)
             logging.info('Created: ' + str(tweet.created_at))
@@ -29,11 +30,13 @@ def retweeter(query):
             tweet.retweet()
             logging.info('Retweeted the tweet ' + str(start))
             logging.info('Sleep within Cursor')
-            sleep(180)
+            sleep(15 * 60)
         except tweepy.RateLimitError:
+            logging.info('Hit rate limit, waiting 15 minutes')
             time.sleep(15 * 60)
         except tweepy.TweepError as e:
             logging.warning(e.reason)
+            logging.info('Twitter error, reason above: ' + str(datetime.datetime.now()))
         except StopIteration:
             break
 
@@ -45,7 +48,7 @@ if __name__ == '__main__':
             retweeter("'New York Islanders' AND -giving")
             # when the cursor page is complete, it will come out and hit the below
             logging.info('sleeping within the while true')
-            sleep (60)
+            sleep (15 * 60)
          except KeyboardInterrupt:
             logging.info('Bye')
             sys.exit()
